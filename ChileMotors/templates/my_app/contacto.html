@@ -1,0 +1,52 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+
+{% block title %}Datos Personales - Chile Motors{% endblock %}
+
+{% block content %}
+<!-- Formulario -->
+<div id="formulario">
+  <div class="d-flex justify-content-center">
+    <div class="col-12 col-md-12 col-lg-6 p-0 pt-4">
+      <form method="post" class="bg-light p-4 m-auto shadow-sm">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="id_nombre">Nombre</label>
+              <input type="text" class="form-control" id="id_nombre" name="nombre" placeholder="Nombre" required>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="id_apellido">Apellido</label>
+              <input type="text" class="form-control" id="id_apellido" name="apellido" placeholder="Apellido" required>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="id_email">Email</label>
+              <input type="email" class="form-control" id="id_email" name="email" placeholder="Email" required>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="id_telefono">Teléfono</label>
+              <input type="text" class="form-control" id="id_telefono" name="telefono" placeholder="Teléfono" required>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="id_detalle">Detalle</label>
+              <textarea class="form-control" id="id_detalle" name="detalle" placeholder="Cuentanos que necesitas!" rows="4"></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block mt-3" type="submit">
+            Enviar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

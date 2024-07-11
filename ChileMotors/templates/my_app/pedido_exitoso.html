@@ -1,0 +1,10 @@
+{% extends 'my_app/base.html' %}
+{% block title %}Pedido Exitoso{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>¡Gracias por tu compra!</h2>
+    <p>Tu pedido ha sido procesado con éxito.</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %}

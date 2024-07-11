@@ -1,0 +1,34 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+
+{% block title %}Servicios - Chile Motors{% endblock %}
+
+{% block content %}
+
+<!-- Sección de Servicios -->
+<section class="services">
+  <div class="container">
+    <h2 class="text-center d-none d-md-block titleweight">Nuestros Servicios</h2>
+    <div class="section-header text-center pb-5">
+      <p2>Ofrecemos una variedad de servicios para que tu auto sea unico.</p2>
+    </div>
+    <div class="row justify-content-center">
+      {% for servicio in servicios %}
+        <div class="col-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch">
+          <div class="card" style="background-image: url('{{ servicio.imagen.url }}');">
+            <div class="card-body">
+              <h3 class="card-title">{{ servicio.titulo }}</h3>
+              <p class="card-p">
+                {{ servicio.descripcion|linebreaks }}
+              </p>
+              {% if servicio.boton_texto and servicio.boton_url %}
+                <a href="{{ servicio.boton_url }}" class="btn btn-primary">{{ servicio.boton_texto }}</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,199 @@
+<!-- templates/header.html -->
+{% load static %}
+<nav class="navbar navbar-expand-md sticky-top py-3 navbar-dark bg-dark">
+    <div class="container">
+        <a href="{% url 'index' %}" class="navbar-brand">
+            <span class="text-primary">Chile</span>Motors
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-start" aria-controls="navbar-start" aria-expanded="false" aria-label="toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-start">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'nosotros' %}">Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'servicios' %}">Servicios</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contacto' %}">Contacto</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Productos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for categoria in categorias %}
+                            <li><a class="dropdown-item" href="{% url 'productos' %}?categoria_id={{ categoria.id }}">{{ categoria.nombre }}</a></li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'productos' %}">Todos los productos</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- Botón para ver el carrito -->
+        {% if user.is_authenticated %}
+        <button class="btn btn-success me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
+            Carrito
+        </button>
+        {% endif %}
+        <!-- Icono de usuario -->
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user"></i>
+                {% if user.is_authenticated %}
+                    @{{ user.username }}
+                {% else %}
+                    Cuenta
+                {% endif %}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+                {% if user.is_authenticated %}
+                    <li><a class="dropdown-item" href="{% url 'mis_pedidos' %}">Mis pedidos</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a></li>
+                {% else %}
+                    <li><a class="dropdown-item" href="{% url 'login' %}">Iniciar sesión</a></li>
+                    <li><a class="dropdown-item" href="{% url 'registro' %}">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Offcanvas del carrito -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cartOffcanvasLabel">Tu carrito de compras</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Imagen</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="carrito-body">
+                <!-- Productos serán insertados aquí dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+    <div class="offcanvas-footer d-flex justify-content-between align-items-center">
+        <div>
+            <span>Subtotal: </span><span id="subtotal">$0</span>
+        </div>
+        <div>
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="offcanvas">Cerrar</button>
+            <button type="button" class="btn btn-success" id="checkoutButton">Pagar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.offcanvas-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var cartButton = document.querySelector('[data-bs-target="#cartOffcanvas"]');
+    cartButton.addEventListener('click', function () {
+        fetch('/ver_carrito/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken // Usar el token CSRF
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var carritoBody = document.getElementById('carrito-body');
+            carritoBody.innerHTML = '';
+            var subtotal = 0;
+            if (data.productos_carrito.length > 0) {
+                data.productos_carrito.forEach(item => {
+                    var precio = item.producto.preciocondescuento 
+                        ? `<span class="text-muted text-decoration-line-through">$${item.producto.precio}</span> <span class="text-success">$${item.producto.preciocondescuento}</span>`
+                        : `$${item.producto.precio}`;
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${item.producto.imagen_url}" alt="${item.producto.nombre}" style="width: 50px; height: auto;"></td>
+                        <td>${item.producto.nombre}</td>
+                        <td>${precio}</td>
+                        <td>${item.cantidad}</td>
+                        <td>$${item.precio_total}</td>
+                        <td><button class="btn btn-danger btn-sm eliminar-producto" data-producto-id="${item.producto.id}">Eliminar</button></td>
+                    `;
+                    carritoBody.appendChild(row);
+                    subtotal += item.precio_total;
+                });
+
+                // Añadir eventos a los botones de eliminar
+                var eliminarButtons = document.querySelectorAll('.eliminar-producto');
+                eliminarButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        var productoId = this.getAttribute('data-producto-id');
+                        fetch('/eliminar_del_carrito/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrftoken
+                            },
+                            body: JSON.stringify({
+                                'producto_id': productoId
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok.');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.status === 'success') {
+                                this.closest('tr').remove();
+                                subtotal -= parseFloat(this.closest('tr').querySelector('td:nth-child(5)').textContent.replace('$', ''));
+                                document.getElementById('subtotal').textContent = `$${Math.round(subtotal)}`;
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                    });
+                });
+            } else {
+                carritoBody.innerHTML = '<tr><td colspan="6">No tienes productos en el carrito.</td></tr>';
+            }
+            document.getElementById('subtotal').textContent = `$${Math.round(subtotal)}`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    // Añadir evento al botón de pagar
+    var checkoutButton = document.getElementById('checkoutButton');
+    checkoutButton.addEventListener('click', function () {
+        window.location.href = "{% url 'checkout' %}";
+    });
+});
+</script>

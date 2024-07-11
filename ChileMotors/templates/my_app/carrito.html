@@ -1,0 +1,12 @@
+{% for item in productos_carrito %}
+<tr>
+    <td>{{ item.producto.nombre }}</td>
+    <td>${{ item.producto.precio }}</td>
+    <td>{{ item.cantidad }}</td>
+    <td>${{ item.precio_total }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4">No tienes productos en el carrito.</td>
+</tr>
+{% endfor %}

@@ -1,0 +1,350 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Chile Motors{% endblock %}
+
+{% block content %}
+
+<!-- Carrusel -->
+<div id="carouselE1" class="carousel slide vh-100" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+      {% for item in carrusel_items %}
+          <button type="button" data-bs-target="#carouselE1" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="true" aria-label="Slide {{ forloop.counter }}"></button>
+      {% endfor %}
+  </div>
+  <div class="carousel-inner vh-100">
+      {% for item in carrusel_items %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ item.imagen.url }}" class="d-block w-100 vh-100" alt="{{ item.titulo }}">
+              <div class="carousel-caption d-none d-md-block">
+                  <h5>{{ item.titulo }}</h5>
+                  <p>{{ item.descripcion }}</p>
+                  {% if item.boton_url %}
+                    <a class="btn btn-primary" href="{{ item.boton_url }}">{{ item.boton_texto }}</a>
+                  {% endif %}
+              </div>
+          </div>
+      {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselE1" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselE1" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<!-- Sección de Servicios -->
+<section class="services">
+  <div class="container">
+    <h2 class="text-center d-none d-md-block titleweight">Nuestros Servicios</h2>
+    <div class="section-header text-center pb-5">
+      <p2>Ofrecemos una variedad de servicios para que tu auto sea unico.</p2>
+    </div>
+    <div class="row justify-content-center">
+      {% for servicio in servicios %}
+        <div class="col-12 col-md-6 col-lg-4 mb-3 d-flex align-items-stretch">
+          <div class="card" style="background-image: url('{{ servicio.imagen.url }}');">
+            <div class="card-body">
+              <h3 class="card-title">{{ servicio.titulo }}</h3>
+              <p class="card-p">
+                {{ servicio.descripcion|linebreaks }}
+              </p>
+              {% if servicio.boton_texto and servicio.boton_url %}
+                <a href="{{ servicio.boton_url }}" class="btn btn-primary">{{ servicio.boton_texto }}</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Sección Envío Gratis, Reembolso y Regalo -->
+<section class="section-icons">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-4 box-icons">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-airplane"></i>
+                    <div class="ms-4">
+                        <h3>Envío gratis</h3>
+                        <p2>Envíos gratis a Chile por compras sobre $500.000</p2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 box-icons">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-cash-coin"></i>
+                    <div class="ms-4">
+                        <h3>Reembolso</h3>
+                        <p2>Garantía de satisfacción con 100% de reembolso</p2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 box-icons">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-gift-fill"></i>
+                    <div class="ms-4">
+                        <h3>Regalo</h3>
+                        <p2>Obtén un regalo por realizar tu compra con nosotros</p2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de Productos -->
+<section class="product">
+  <div class="container">
+  </br>
+    <h2 class="text-center d-none d-md-block titleweight">Nuestros Productos</h2>
+      <div class="section-header text-center pb-5">
+          <p>En nuestro catálogo encontrarás la solución perfecta para mantener tu vehículo en óptimas condiciones.</p>
+      </div>
+      <div class="row">
+          {% for producto in productos %}
+          <div class="col-12 col-md-6 col-lg-3">
+              <div class="card bg-light shadow-sm border-0 px-2 py-3 mb-4 product-card" data-producto-id="{{ producto.id }}">
+                  <div class="text-center">
+                      <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid" />
+                  </div>
+                  <div class="card-body">
+                      <h5 class="product-title">{{ producto.nombre }}</h5>
+                      <p>{{ producto.descripcion|truncatechars:50 }}</p>
+                      {% if producto.preciocondescuento %}
+                      <p>
+                          <span class="text-decoration-line-through">${{ producto.precio }}</span>
+                          <span class="text-success">${{ producto.preciocondescuento }}</span>
+                      </p>
+                      {% else %}
+                      <p>${{ producto.precio }}</p>
+                      {% endif %}
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#quick-view" data-producto-id="{{ producto.id }}">Ver más</button>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+</section>
+
+<!-- Modal para ver detalles del producto -->
+<div class="modal fade" id="quick-view" tabindex="-1" aria-labelledby="quick-view-label" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Carrusel de imágenes -->
+              <div id="carouselProducto" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner" id="producto-carousel-inner">
+                  <!-- Imágenes serán insertadas aquí dinámicamente -->
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselProducto" data-bs-slide="prev" style="left: -40px;">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselProducto" data-bs-slide="next" style="right: -40px;">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              <!-- Miniaturas de imágenes -->
+              <div class="row mt-2" id="producto-thumbnails">
+                <!-- Miniaturas serán insertadas aquí dinámicamente -->
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="info">
+                <h2 id="producto-nombre"></h2>
+                <p id="producto-categoria"></p>
+                <div class="precio">
+                  <p class="precio-final" id="producto-precio"></p>
+                  <p class="precio-normal text-success" id="producto-preciocondescuento"></p>
+                </div>
+                <hr />
+                <div class="details" id="producto-descripcion"></div>
+                <div class="add-to-cart">
+                  <div class="col-md-12">
+                    {% if user.is_authenticated %}
+                    <div class="d-flex align-items-center">
+                        <input type="number" name="qty" value="1" min="1" class="form-control me-2" style="width: 80px;" />
+                        <button class="btn btn-primary" id="add-to-cart-button">
+                          <i class="bi bi-cart"></i>Añadir al Carrito
+                        </button>
+                    </div>
+                    {% else %}
+                    <h3>Debes iniciar sesión para poder añadir al carrito</h3>
+                    {% endif %}
+                  </div>
+                  <hr />
+                </div>
+                <div class="etiquetas">
+                  <p id="producto-sku"></p>
+                </div>
+              </div>
+              <div class="etiquetas">
+                <p id="producto-sku"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var quickViewModal = document.getElementById('quick-view');
+    quickViewModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Botón que activó el modal
+        var productoId = button.getAttribute('data-producto-id');
+        console.log("Producto ID:", productoId); // Verificar el ID del producto
+
+        // Hacer una petición AJAX para obtener los detalles del producto
+        fetch(`/producto/${productoId}/`)
+            .then(response => {
+                console.log("Respuesta del servidor:", response); // Verificar la respuesta del servidor
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos del producto:", data); // Verificar los datos recibidos
+                document.getElementById('producto-nombre').textContent = data.nombre;
+                document.getElementById('producto-sku').textContent = `Referencia: ${data.sku}`;
+                document.getElementById('producto-precio').innerHTML = data.preciocondescuento ? `<span class="text-decoration-line-through">$${data.precio}</span>` : `$${data.precio}`;
+                document.getElementById('producto-preciocondescuento').textContent = data.preciocondescuento ? `$${data.preciocondescuento}` : '';
+                document.getElementById('producto-descripcion').textContent = data.descripcion;
+                document.getElementById('producto-categoria').textContent = data.categoria;
+
+                // Crear carrusel de imágenes
+                var carouselInner = document.getElementById('producto-carousel-inner');
+                carouselInner.innerHTML = ''; // Limpiar contenido anterior
+
+                // Asegurarse de incluir la imagen principal en primer lugar
+                var imagenes = [data.imagen].concat(data.imagenes.length > 0 ? data.imagenes : []);
+
+                imagenes.forEach((imagenUrl, index) => {
+                    var carouselItem = document.createElement('div');
+                    carouselItem.classList.add('carousel-item');
+                    if (index === 0) {
+                        carouselItem.classList.add('active');
+                    }
+                    var img = document.createElement('img');
+                    img.src = imagenUrl;
+                    img.classList.add('d-block', 'w-100');
+                    carouselItem.appendChild(img);
+                    carouselInner.appendChild(carouselItem);
+                });
+
+                // Crear miniaturas de imágenes
+                var thumbnails = document.getElementById('producto-thumbnails');
+                thumbnails.innerHTML = ''; // Limpiar contenido anterior
+
+                imagenes.forEach((imagenUrl, index) => {
+                    var thumbnailCol = document.createElement('div');
+                    thumbnailCol.classList.add('col-3', 'p-1');
+                    var thumbnailImg = document.createElement('img');
+                    thumbnailImg.src = imagenUrl;
+                    thumbnailImg.classList.add('img-fluid', 'thumbnail-img', 'border', 'border-primary', 'rounded');
+                    thumbnailImg.style.cursor = 'pointer';
+                    thumbnailImg.addEventListener('click', function () {
+                        // Actualizar el carrusel al hacer clic en una miniatura
+                        document.querySelectorAll('#carouselProducto .carousel-item').forEach(function (item) {
+                            item.classList.remove('active');
+                        });
+                        document.querySelectorAll('#carouselProducto .carousel-item')[index].classList.add('active');
+                    });
+                    thumbnailCol.appendChild(thumbnailImg);
+                    thumbnails.appendChild(thumbnailCol);
+                });
+
+                // Añadir evento para el botón "Añadir al Carrito"
+                var addToCartButton = document.getElementById('add-to-cart-button');
+                addToCartButton.addEventListener('click', function () {
+                    var cantidad = document.querySelector('.add-to-cart input[name="qty"]').value;
+                    fetch('/add_to_cart/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken // Usar el token CSRF
+                        },
+                        body: JSON.stringify({
+                            'producto_id': productoId,
+                            'cantidad': cantidad
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error("Error al obtener los detalles del producto:", error); // Verificar errores
+            });
+    });
+
+    // Añadir efecto de hover para mostrar imágenes adicionales
+    var productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(function(card) {
+        card.addEventListener('mouseenter', function() {
+            var productoId = card.getAttribute('data-producto-id');
+            fetch(`/producto/${productoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.imagenes.length > 0) {
+                        card.querySelector('img').src = data.imagenes[0];
+                    }
+                });
+        });
+
+        card.addEventListener('mouseleave', function() {
+            var productoId = card.getAttribute('data-producto-id');
+            fetch(`/producto/${productoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    card.querySelector('img').src = data.imagen;
+                });
+        });
+    });
+});
+
+</script>
+{% endblock content %}

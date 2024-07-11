@@ -1,0 +1,61 @@
+<!-- templates/my_app/mis_pedidos.html -->
+{% extends "my_app/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Mis Pedidos</h2>
+    {% if pedidos %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Número de Pedido</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Método de Pago</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido in pedidos %}
+                        <tr>
+                            <td>{{ pedido.numero_pedido }}</td>
+                            <td>{{ pedido.fecha_pedido|date:"d/m/Y H:i:s" }}</td>
+                            <td>${{ pedido.total|floatformat:0 }}</td>
+                            <td>{{ pedido.metodo_pago }}</td>
+                            <td>
+                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#detalles-{{ forloop.counter }}" aria-expanded="false" aria-controls="detalles-{{ forloop.counter }}">
+                                    Ver detalles
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="collapse" id="detalles-{{ forloop.counter }}">
+                            <td colspan="5">
+                                <ul class="list-group">
+                                    {% for item in pedido.pedido_productos.all %}
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h5>{{ item.producto.nombre }}</h5>
+                                                    <p>Cantidad: {{ item.cantidad }}</p>
+                                                    <p>Precio unitario: ${{ item.precio|floatformat:0 }}</p>
+                                                    
+                                                </div>
+                                                <div>
+                                                    <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" style="width: 100px; height: auto;">
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No ha realizado ningún pedido.</p>
+    {% endif %}
+</div>
+{% endblock %}

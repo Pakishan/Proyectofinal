@@ -1,0 +1,33 @@
+{% load static %}
+<footer class="bg-dark p-2 text-center">
+    <div>
+        <div class="row footer">
+            <div class="col-sm-4 col-md-4 text-center text-lg-start d-flex flex-column pad">
+                <h3 class="fs-6">Información</h3>
+                <ul>
+                    <li><a href="#">Terminos legales</a></li>
+                    <li><a href="#">Envios</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-4 col-md-4 text-center text-lg-start d-flex flex-column pad">
+                <h3 class="fs-6">Categorias</h3>
+                <ul>
+                    <a class="nav-link" href="{% url 'servicios' %}">Servicios</a>
+                    <li><a href="{% url 'productos' %}">Productos</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-4 col-md-4 text-center text-lg-start d-flex flex-column pad">
+                <h3 class="fs-6">Contacto</h3>
+                <ul>
+                    <li><a href="{% url 'contacto' %}">Contactanos</a></li>
+                    <li><a href="#">contacto@chilemotors.cl</a></li>
+                    <li><a href="#">+56 9 5432 5432</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <hr />
+        <p class="text-white">® Programación Web 2024</p>
+    </div>
+</footer>

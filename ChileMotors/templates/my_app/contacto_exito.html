@@ -1,0 +1,24 @@
+{% extends 'my_app/base.html' %}
+{% load static %}
+
+{% block title %}¡Éxito! - Chile Motors{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="ticket bg-light p-4 m-auto shadow-sm text-center">
+        <h1 class="display-4">¡Perfecto!</h1>
+        <p class="lead">{{ nombre }}, te contactaremos en breve.</p>
+    </div>
+</div>
+
+<style>
+    .ticket {
+        border: 1px dashed #000;
+        padding: 20px;
+        margin: 20px;
+        width: 80%;
+        max-width: 400px;
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock content %}
